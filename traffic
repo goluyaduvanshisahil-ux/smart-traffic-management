@@ -1,0 +1,106 @@
+import time
+import random
+from dataclasses import dataclass
+
+# ----------------------------------------
+# SMART TRAFFIC MANAGEMENT SYSTEM
+# ----------------------------------------
+# Features:
+# 1. Adaptive traffic light timing
+# 2. Traffic density monitoring
+# 3. Emergency vehicle priority
+# 4. Live traffic simulation
+# ----------------------------------------
+
+@dataclass
+class Road:
+    name: str
+    vehicles: int
+    emergency_vehicle: bool = False
+
+
+class SmartTrafficSystem:
+    def __init__(self):
+        self.roads = [
+            Road("North", random.randint(5, 50)),
+            Road("South", random.randint(5, 50)),
+            Road("East", random.randint(5, 50)),
+            Road("West", random.randint(5, 50)),
+        ]
+
+    def update_traffic(self):
+        """Simulate changing traffic density."""
+        for road in self.roads:
+            road.vehicles = max(0, road.vehicles + random.randint(-5, 10))
+
+            # Random emergency vehicle chance
+            road.emergency_vehicle = random.choice([False, False, False, True])
+
+    def display_status(self):
+        print("\n==============================")
+        print(" SMART TRAFFIC MANAGEMENT ")
+        print("==============================")
+
+        for road in self.roads:
+            emergency = "🚑 Emergency Vehicle" if road.emergency_vehicle else ""
+            print(f"{road.name:5} | Vehicles: {road.vehicles:3} {emergency}")
+
+    def choose_green_signal(self):
+        # Emergency vehicle gets highest priority
+        emergency_roads = [r for r in self.roads if r.emergency_vehicle]
+
+        if emergency_roads:
+            selected = max(emergency_roads, key=lambda r: r.vehicles)
+            green_time = 20
+            print(f"\n🚨 PRIORITY MODE ACTIVATED for {selected.name} road")
+        else:
+            selected = max(self.roads, key=lambda r: r.vehicles)
+            green_time = min(10 + selected.vehicles // 2, 40)
+
+        return selected, green_time
+
+    def run(self):
+        cycle = 1
+
+        while cycle <= 10:
+            self.update_traffic()
+            self.display_status()
+
+            selected, green_time = self.choose_green_signal()
+
+            print(f"\n🟢 GREEN SIGNAL: {selected.name} Road")
+            print(f"⏱ Green Time Allocated: {green_time} seconds")
+
+            # Simulate traffic reduction
+            cleared = green_time // 2
+            selected.vehicles = max(0, selected.vehicles - cleared)
+
+            print(f"✅ Cleared approximately {cleared} vehicles")
+
+            print("\n🔴 Other Roads: RED Signal")
+
+            time.sleep(2)
+            cycle += 1
+
+        print("\n================================")
+        print(" Simulation Completed Successfully")
+        print("================================")
+
+
+if __name__ == "__main__":
+    system = SmartTrafficSystem()
+    system.run()
+
+# ----------------------------------------
+# HOW TO RUN
+# ----------------------------------------
+# 1. Save this file as smart_traffic.py
+# 2. Open terminal or command prompt
+# 3. Run:
+#       python smart_traffic.py
+# ----------------------------------------
+# REQUIREMENTS
+# ----------------------------------------
+# Python 3.x only
+# No external libraries required
+# ----------------------------------------
